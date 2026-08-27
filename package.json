@@ -1,0 +1,27 @@
+{
+  "name": "hyperblast-shooter",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "pnpm typecheck && pnpm lint && pnpm test:run && pnpm build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.9",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.0",
+    "vitest": "^4.1.11"
+  },
+  "dependencies": {
+    "@arcade/runtime": "file:../arcade-runtime",
+    "pixi.js": "^8.19.0"
+  }
+}

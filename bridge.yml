@@ -1,0 +1,33 @@
+version: 1
+name: hyperblast-shooter
+description: Vertically scrolling cyberpunk arcade shmup built on @arcade/runtime.
+defaultTrack: main
+shell: true
+agent:
+  notes: New TypeScript/Vite rewrite at /home/user/code/hyperblast-shooter. @arcade/runtime is not published to npm; consume the local file dependency ../arcade-runtime (currently package 1.12.0 with 1.13 work in progress). The old /home/user/work/code/artifacts/hyperblast-shooter project is reference material only and must not be edited as this project.
+  tasks:
+    - Implement phases from DESIGN_SPEC.md using deterministic @arcade/runtime APIs.
+    - Keep build, test:run, typecheck, and lint green after each phase.
+  changelog:
+    - "2026-08-20 Phase 1 scaffold: Vite/TypeScript/Pixi/runtime, Biome, Vitest, complete DESIGN_SPEC.md."
+commands:
+  build:
+    run: ["pnpm", "build"]
+    description: Typecheck and build the Vite application.
+    category: build
+  test:
+    run: ["pnpm", "test:run"]
+    description: Run deterministic Vitest tests.
+    category: test
+  lint:
+    run: ["pnpm", "lint"]
+    description: Run Biome lint.
+    category: lint
+  typecheck:
+    run: ["pnpm", "typecheck"]
+    description: Run TypeScript type checking.
+    category: build
+  check:
+    run: ["pnpm", "check"]
+    description: Run all release-development checks.
+    category: custom

@@ -1,0 +1,66 @@
+{
+  "schema": "arcade-atlas-project/v1",
+  "version": 1,
+  "id": "hyperblast-hero",
+  "runtime": {
+    "manifestFile": "hero.manifest.json",
+    "manifest": {
+      "version": "1.0.0",
+      "sheets": [
+        {
+          "id": "hyperblast-hero",
+          "file": "hero.png",
+          "frameSize": [343, 361],
+          "animations": {
+            "idle": {
+              "frames": 1,
+              "fps": 1,
+              "loop": true,
+              "order": [0],
+              "anchor": [171.5, 180.5]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "instructions": [
+    {
+      "id": "player-sheet-role",
+      "namespace": "core",
+      "kind": "sheet-role",
+      "mode": "required",
+      "target": { "sheet": "hyperblast-hero" },
+      "data": { "role": "player" }
+    },
+    {
+      "id": "ship-center-anchor",
+      "namespace": "core",
+      "kind": "anchor-point",
+      "mode": "default",
+      "target": { "sheet": "hyperblast-hero", "animation": "*" },
+      "data": { "role": "ship-center", "policy": "center" }
+    },
+    {
+      "id": "procedural-facing",
+      "namespace": "app.hyperblast-shooter",
+      "kind": "ship-facing-policy",
+      "mode": "hint",
+      "target": { "sheet": "hyperblast-hero" },
+      "data": { "basis": "velocity-vector", "rotationOwnedByGame": true }
+    }
+  ],
+  "extensions": {
+    "app.hyperblast-shooter": {
+      "consumer": "player",
+      "currentRenderer": "procedural-pixi-fallback",
+      "authoringPurpose": "replace procedural player with authored sprite without changing center-based physics semantics",
+      "physicsAnchorRole": "ship-center"
+    }
+  },
+  "provenance": {
+    "source": "src/assets/hero.png",
+    "sourceGeometry": [343, 361],
+    "producer": "hyperblast-shooter"
+  }
+}
