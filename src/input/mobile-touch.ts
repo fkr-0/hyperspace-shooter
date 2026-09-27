@@ -84,17 +84,23 @@ export function createMobileTouchController(options: Readonly<{
         .snapshot()
         .pointers.filter((contact) => contact.pointerType === 'touch' && contact.buttons !== 0)
       const currentIds = new Set(contacts.map((contact) => contact.pointerId))
-      const fireContacts = contacts.filter((contact) => contains(options.fireRect(), contact))
-      const specialContacts = contacts.filter((contact) => contains(options.specialRect(), contact))
+      const playfieldRect = options.playfieldRect()
+      const fireRect = options.fireRect()
+      const specialRect = options.specialRect()
+      const fireContacts = contacts.filter((contact) => contains(fireRect, contact))
+      const specialContacts = contacts.filter((contact) => contains(specialRect, contact))
       const movementContacts = contacts.filter(
-        (contact) => !contains(options.fireRect(), contact) && !contains(options.specialRect(), contact),
+        (contact) =>
+          contains(playfieldRect, contact) &&
+          !contains(fireRect, contact) &&
+          !contains(specialRect, contact),
       )
       const movement = latestContact(movementContacts)
       const target = movement
-        ? clientToLogical(movement, options.playfieldRect(), options.logicalWidth, options.logicalHeight)
+        ? clientToLogical(movement, playfieldRect, options.logicalWidth, options.logicalHeight)
         : null
       const specialPressed = specialContacts.some((contact) => !knownTouchIds.has(contact.pointerId))
-      const firing = fireContacts.length > 0 || (autoFire && movementContacts.length > 0)
+      const firing = fireContacts.length > 0 || (autoFire && target !== null)
       const input = touchInputTowardTarget(player, target, {
         deadZone: options.deadZone,
         fire: firing,

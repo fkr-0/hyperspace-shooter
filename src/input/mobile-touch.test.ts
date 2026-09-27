@@ -100,6 +100,89 @@ describe('mobile touch input mapping', () => {
     expect(controller.read({ x: 240, y: 628 }, false).active).toBe(false)
   })
 
+  it('ignores active touches outside the playfield so telemetry taps cannot move or auto-fire', () => {
+    const pointers: readonly PointerContactState[] = [
+      {
+        pointerId: 9,
+        pointerType: 'touch',
+        x: 620,
+        y: 260,
+        pressure: 1,
+        buttons: 1,
+        isPrimary: true,
+        sequence: 1,
+      },
+    ]
+    const pointer = {
+      snapshot: () => ({ pointers }),
+    } as PointerDevice
+    const controller = createMobileTouchController({
+      pointer,
+      playfieldRect: () => ({ left: 0, top: 0, width: 480, height: 720 }),
+      fireRect: () => ({ left: 360, top: 540, width: 120, height: 180 }),
+      specialRect: () => ({ left: 390, top: 0, width: 90, height: 130 }),
+      logicalWidth: 480,
+      logicalHeight: 720,
+    })
+
+    const snapshot = controller.read({ x: 240, y: 628 }, true)
+    expect(snapshot).toMatchObject({
+      active: true,
+      moving: false,
+      firing: false,
+      specialPressed: false,
+      target: null,
+    })
+    expect(snapshot.input).toMatchObject({ fire: false, bomb: false, left: false, right: false })
+  })
+
+  it('reads each control rectangle once per input frame even with multiple contacts', () => {
+    const pointers: readonly PointerContactState[] = [
+      {
+        pointerId: 1,
+        pointerType: 'touch',
+        x: 100,
+        y: 120,
+        pressure: 1,
+        buttons: 1,
+        isPrimary: true,
+        sequence: 1,
+      },
+      {
+        pointerId: 2,
+        pointerType: 'touch',
+        x: 430,
+        y: 650,
+        pressure: 1,
+        buttons: 1,
+        isPrimary: false,
+        sequence: 2,
+      },
+    ]
+    const pointer = { snapshot: () => ({ pointers }) } as PointerDevice
+    const reads = { playfield: 0, fire: 0, special: 0 }
+    const controller = createMobileTouchController({
+      pointer,
+      playfieldRect: () => {
+        reads.playfield += 1
+        return { left: 0, top: 0, width: 480, height: 720 }
+      },
+      fireRect: () => {
+        reads.fire += 1
+        return { left: 360, top: 540, width: 120, height: 180 }
+      },
+      specialRect: () => {
+        reads.special += 1
+        return { left: 390, top: 0, width: 90, height: 130 }
+      },
+      logicalWidth: 480,
+      logicalHeight: 720,
+    })
+
+    controller.read({ x: 240, y: 628 }, false)
+    expect(reads).toEqual({ playfield: 1, fire: 1, special: 1 })
+  })
+
   it('turns a special-zone contact into one bomb edge and supports movement-driven auto fire', () => {
     let pointers: readonly PointerContactState[] = [
       {
