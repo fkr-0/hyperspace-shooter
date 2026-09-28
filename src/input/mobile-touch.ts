@@ -1,5 +1,6 @@
 import type { PointerDevice, PointerContactState } from '@arcade/runtime/core'
 import type { PlayerInput } from '../game/types'
+import { installTransientInputLifecycle, type TransientInputLifecycle } from './transient-input-lifecycle'
 
 export type TouchRect = Readonly<{ left: number; top: number; width: number; height: number }>
 export type LogicalPoint = Readonly<{ x: number; y: number }>
@@ -16,6 +17,7 @@ export type MobileTouchSnapshot = Readonly<{
 export type MobileTouchController = Readonly<{
   read(player: LogicalPoint, autoFire: boolean): MobileTouchSnapshot
   reset(): void
+  destroy(): void
 }>
 
 function contains(rect: TouchRect, point: LogicalPoint): boolean {
@@ -26,6 +28,16 @@ function contains(rect: TouchRect, point: LogicalPoint): boolean {
     point.y <= rect.top + rect.height
   )
 }
+
+const NEUTRAL_INPUT: PlayerInput = Object.freeze({
+  left: false,
+  right: false,
+  up: false,
+  down: false,
+  focus: false,
+  fire: false,
+  bomb: false,
+})
 
 export function clientToLogical(
   point: LogicalPoint,
@@ -77,12 +89,39 @@ export function createMobileTouchController(options: Readonly<{
   deadZone?: number
 }>): MobileTouchController {
   const knownTouchIds = new Set<number>()
+  let suppressActiveContacts = false
+  let lifecycle: TransientInputLifecycle | null = null
+
+  const reset = () => {
+    knownTouchIds.clear()
+    suppressActiveContacts = true
+  }
+
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    lifecycle = installTransientInputLifecycle({
+      windowTarget: window,
+      documentTarget: document,
+      isDocumentHidden: () => document.visibilityState !== 'visible',
+      reset,
+    })
+  }
 
   return Object.freeze({
     read(player: LogicalPoint, autoFire: boolean): MobileTouchSnapshot {
       const contacts = options.pointer
         .snapshot()
         .pointers.filter((contact) => contact.pointerType === 'touch' && contact.buttons !== 0)
+      if (suppressActiveContacts) {
+        if (contacts.length === 0) suppressActiveContacts = false
+        return Object.freeze({
+          input: NEUTRAL_INPUT,
+          active: contacts.length > 0,
+          moving: false,
+          firing: false,
+          specialPressed: false,
+          target: null,
+        })
+      }
       const currentIds = new Set(contacts.map((contact) => contact.pointerId))
       const playfieldRect = options.playfieldRect()
       const fireRect = options.fireRect()
@@ -119,8 +158,11 @@ export function createMobileTouchController(options: Readonly<{
         target,
       })
     },
-    reset(): void {
-      knownTouchIds.clear()
+    reset,
+    destroy(): void {
+      lifecycle?.destroy()
+      lifecycle = null
+      reset()
     },
   })
 }

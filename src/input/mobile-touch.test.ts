@@ -228,4 +228,58 @@ describe('mobile touch input mapping', () => {
     expect(autoFire.input.fire).toBe(true)
     expect(autoFire.input.up).toBe(true)
   })
+
+  it('suppresses stale held contacts after an interruption until all contacts clear', () => {
+    let pointers: readonly PointerContactState[] = [
+      {
+        pointerId: 11,
+        pointerType: 'touch',
+        x: 120,
+        y: 180,
+        pressure: 1,
+        buttons: 1,
+        isPrimary: true,
+        sequence: 1,
+      },
+    ]
+    const pointer = { snapshot: () => ({ pointers }) } as PointerDevice
+    const controller = createMobileTouchController({
+      pointer,
+      playfieldRect: () => ({ left: 0, top: 0, width: 480, height: 720 }),
+      fireRect: () => ({ left: 360, top: 540, width: 120, height: 180 }),
+      specialRect: () => ({ left: 390, top: 0, width: 90, height: 130 }),
+      logicalWidth: 480,
+      logicalHeight: 720,
+    })
+
+    expect(controller.read({ x: 240, y: 628 }, true).moving).toBe(true)
+    controller.reset()
+
+    expect(controller.read({ x: 240, y: 628 }, true)).toMatchObject({
+      active: true,
+      moving: false,
+      firing: false,
+      specialPressed: false,
+      target: null,
+      input: { left: false, right: false, up: false, down: false, focus: false, fire: false, bomb: false },
+    })
+
+    pointers = []
+    expect(controller.read({ x: 240, y: 628 }, true).active).toBe(false)
+
+    pointers = [
+      {
+        pointerId: 12,
+        pointerType: 'touch',
+        x: 120,
+        y: 180,
+        pressure: 1,
+        buttons: 1,
+        isPrimary: true,
+        sequence: 2,
+      },
+    ]
+    expect(controller.read({ x: 240, y: 628 }, true)).toMatchObject({ moving: true, firing: true })
+    controller.destroy()
+  })
 })
