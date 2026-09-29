@@ -5,6 +5,22 @@ Current HEAD before this evidence-only update: 11c5841d6fbd49f3d63d5814b42178f06
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
 
+## 2026-09-29 current mobile hardening verification
+
+Fresh verification at HEAD `9130419d664e744ce714e868c7d9c1606ae5c065` reproduced no mobile gameplay, rendering, persistence, or lifecycle defect, so no product-source code was rewritten.
+
+- TypeScript, Biome lint, Vitest, and production build all passed.
+- Vitest result: 24/24 test files, 79/79 tests. Focused coverage includes mobile touch 9/9, transient input lifecycle 2/2, high-score persistence 4/4, and WebGL lifecycle 1/1.
+- Deterministic simulation soak remained bounded across all five stages. Fresh samples reported maximum projectile counts of 150, 168, 215, 158, and 187 respectively; mean simulation-step cost stayed below 0.14 ms in this run.
+- Production build succeeded with PixiJS output plus compact sprite atlases: production ship atlas 21.87 kB and late-boss atlas 38.04 kB. The main JS bundle was 488.72 kB / 145.81 kB gzip.
+- Managed Chromium at 390×844 and DPR 3 showed document width equal to viewport width with no horizontal overflow. Runtime diagnostics confirmed the DPR-3 browser was rendered with the intentional Pixi resolution cap of 2.
+- Active-gameplay runtime diagnostics sampled the latest 240 frames at mean frame work about 0.33 ms, p95 about 0.60 ms, and max about 3.70 ms. This is desktop/headless Chromium evidence, not physical-phone sustained-60-FPS certification.
+- The runtime reported production sprite/VFX atlas mode, context state `ready`, browser-backed high-score storage (`usingFallback=false`), and an advancing fixed-step combat simulation after the title → gameplay transition.
+- The managed Chromium device preset still reports `navigator.maxTouchPoints=0` and `(pointer: coarse)=false`; native touch-capability auto-detection therefore cannot be certified from that preset. Runtime-pointer multi-touch semantics remain covered by deterministic tests and earlier synthetic touch-browser probes documented below.
+- The only material remaining qualification gap is physical-device coverage: iOS Safari and Android Chrome touch latency, true simultaneous contacts, background/BFCache resume, private/restricted storage behavior, thermal throttling, and sustained mobile-GPU frame pacing.
+
+No new product code was committed for this pickup because the requested mobile implementation is already present and current verification did not reproduce a code defect.
+
 ## 2026-09-29 post-narrative mobile revalidation
 
 Fresh verification at HEAD `2a9a668e28171af4a54f028cabae2b376926006b` rechecked mobile behavior after the narrative/story overlay integration. No product-source mobile regression was reproduced.
