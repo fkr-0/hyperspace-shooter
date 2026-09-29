@@ -1,8 +1,40 @@
 # Hyperblast Shooter mobile hardening qualification
 
-Date: 2026-09-28
-Baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
+Date: 2026-09-29 (requalified; original qualification 2026-09-28)
+Current HEAD: bc63fc02712ee67fbe999e39d1b129be85cceb7f
+Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
+
+## 2026-09-29 requalification
+
+The mobile implementation is now tracked through the following scoped commits on `main`:
+
+- `b7bb6f5` — mobile touch controller.
+- `ed98621` — touch-zone hardening.
+- `1d6bd44` — restricted-storage/high-score fallback hardening.
+- `75cb99a` — transient touch-input lifecycle recovery across blur/visibility suspension.
+- `bc63fc0` — drag pursuit uses normal movement at distance and precision focus near the target, avoiding slow full-screen pursuit on phones.
+
+Fresh verification against the current integrated dirty tree:
+
+- TypeScript typecheck: pass.
+- Biome lint: pass, 133 files checked.
+- Vitest: 22 test files, 74/74 tests passed.
+- Mobile touch mapping: 9/9 passed.
+- Transient input lifecycle: 2/2 passed.
+- High-score persistence: 4/4 passed.
+- Production Vite build: pass; main JS 475.54 kB / 140.71 kB gzip, CSS 6.22 kB / 1.89 kB gzip.
+
+Fresh managed-Chromium evidence:
+
+- iPhone-15-sized portrait emulation: 393×852 CSS px at DPR 3; document width 393 px with no horizontal overflow.
+- Pixi backing canvas: 960×1440 while CSS canvas measured about 376.6×565.9 px; runtime diagnostic render resolution remained capped at 2.
+- Title-scene runtime frame work over the initial 9-frame sample: mean ~2.31 ms, p95 16.6 ms, max 16.6 ms. This is desktop headless Chromium evidence, not physical-phone GPU certification.
+- Landscape 844×390 forced-touch presentation: document scroll width exactly 844 px; playfield about 252.5×378.8 px; fire zone about 58.1×90.9 px; special zone about 45.5×60.6 px.
+- Synthetic WebGL lifecycle events moved runtime diagnostics from `ready` → `lost` → `ready`, incrementing context loss/restore counters from 0/0 to 1/1.
+- The ABC Chromium device preset still reports `navigator.maxTouchPoints = 0`, so fresh device-preset automation cannot truthfully claim native touch capability detection. Touch semantics remain verified by runtime-pointer tests and the earlier synthetic `PointerEvent(pointerType='touch')` browser evidence below.
+
+No new source defect was reproduced during this requalification. The large uncommitted campaign/render/audio working tree remains unrelated inherited work and was intentionally not included in the mobile documentation commit.
 
 ## Working-tree implementation found
 
