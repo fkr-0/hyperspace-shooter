@@ -1,9 +1,26 @@
 # Hyperblast Shooter mobile hardening qualification
 
 Date: 2026-09-29 (requalified; original qualification 2026-09-28)
-Current HEAD before this evidence-only update: 604c2e2669e0d8e38f1e25a34e4e8b3c47433072
+Current HEAD before this evidence-only update: 9149f16c3522a267dc1ab5fd9790494102302d13
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
+
+## 2026-09-29 19:13 CEST current-HEAD requalification
+
+Fresh verification at HEAD `9149f16c3522a267dc1ab5fd9790494102302d13` reproduced no mobile gameplay, touch-input, persistence, WebGL-lifecycle, or responsive-layout defect. The requested implementation is already present in tracked source, so this run records qualification evidence instead of replaying product changes.
+
+- Full workspace verification: PASS — TypeScript typecheck, Biome lint (147 files), Vitest 24/24 files with 79/79 tests, and production Vite build.
+- Focused mobile/lifecycle/storage coverage inside the full run remains 16/16: mobile touch 9/9, transient input lifecycle 2/2, high-score persistence 4/4, WebGL lifecycle 1/1.
+- Deterministic stage soaks remained bounded with maximum projectile counts 150, 168, 215, 158, and 187 for stages 1–5. Final mean simulation-step samples were approximately 0.143, 0.070, 0.044, 0.043, and 0.043 ms; terminal Stage 4/5 samples were approximately 0.097 and 0.053 ms.
+- Production build transformed 747 modules. Main JS remained 488.72 kB / 145.81 kB gzip and CSS 7.54 kB / 2.24 kB gzip; ship and late-boss atlases remained 21.87 kB and 38.04 kB.
+- Managed Chromium iPhone-15 emulation measured 393×852 CSS px at DPR 3. The fixed 480×720 Pixi surface used a 960×1440 backing canvas, confirming the intended render-resolution cap of 2.
+- The managed Chromium iPhone preset still reports `navigator.maxTouchPoints=0` and `(pointer: coarse)=false`; native touch-capability auto-detection therefore remains a physical-device qualification item.
+- Title → gameplay smoke passed in the managed browser. Runtime diagnostics advanced to combat with browser-backed high-score persistence active (`usingFallback=false`, schema v2).
+- Short-landscape smoke at 844×390 reported document scroll width 829 px, so no horizontal page overflow was present. Active rolling frame-work over the latest 240 frames measured approximately 0.162 ms mean, 0.20 ms p50, 0.30 ms p95, and 0.30 ms max on headless desktop Chromium.
+- The current browser tooling rejected the attempted fresh synthetic multi-contact script before execution; runtime-pointer simultaneous move+fire remains covered by the 9 deterministic mobile-touch tests and earlier browser PointerEvent evidence already recorded below. This is a tooling limitation, not a reproduced game failure.
+- Remaining qualification gaps are physical-device or real-time E2E gaps: native iOS Safari / Android Chrome touch latency and capability detection, sustained mobile-GPU/thermal frame pacing, BFCache/background recovery, private-mode storage behavior, and a complete real-time title → gameplay → stage-clear result → persisted-high-score run.
+
+No product source file was changed because current verification did not reproduce a source defect.
 
 ## 2026-09-29 18:21 CEST current-HEAD requalification
 
