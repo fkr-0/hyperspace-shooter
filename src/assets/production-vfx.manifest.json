@@ -1,0 +1,70 @@
+{
+  "version": "1.0.0",
+  "sheets": [
+    {
+      "id": "hyperblast-production-vfx",
+      "file": "__VITE_ASSET_URL__",
+      "frameSize": [
+        32,
+        32
+      ],
+      "grid": {
+        "columns": 4,
+        "rows": 3
+      },
+      "animations": {
+        "player-bolt": {
+          "frames": 4,
+          "fps": 18,
+          "loop": true,
+          "order": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "anchor": [
+            16,
+            16
+          ]
+        },
+        "enemy-burst": {
+          "frames": 4,
+          "fps": 14,
+          "loop": true,
+          "order": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "anchor": [
+            16,
+            16
+          ]
+        },
+        "pickup-ring": {
+          "frames": 4,
+          "fps": 10,
+          "loop": true,
+          "order": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "anchor": [
+            16,
+            16
+          ]
+        }
+      },
+      "source": {
+        "provenance": "Deterministically derived from authored recoil/shield/warp/destroyed effect pixels in the read-only legacy Hyperblast production ship atlas; no placeholder geometry substituted.",
+        "referenceAtlasSha256": "68cea95a39d4ef6e328725fcfeb2c781a05b3e3adde5063fdb299c99b5f75741",
+        "sourceSha256": "b9026070d4b506d68e5f2e56cb025a2a8457539eaddf69e8a3ac2bdc78a173b0",
+        "builder": ".ws-bridge/render-jobs/hyperblast-phase4-vfx/build_derived_vfx.py"
+      }
+    }
+  ]
+}

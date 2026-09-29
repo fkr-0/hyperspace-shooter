@@ -3,12 +3,12 @@ import type { ProjectileSystem } from './projectiles'
 import type { PlayerState } from './types'
 
 export type WeaponEmitterState = {
-  family: 'baseline'
+  family: 'spread'
   powerLevel: number
 }
 
 export function createBaselineWeaponEmitter(): WeaponEmitterState {
-  return { family: 'baseline', powerLevel: 1 }
+  return { family: 'spread', powerLevel: 1 }
 }
 
 export function stepBaselineWeapon(
@@ -20,9 +20,16 @@ export function stepBaselineWeapon(
   if (!player.firing || player.shotCooldownTicks > 0) return 0
 
   player.shotCooldownTicks = PLAYER_SHOT_CADENCE_TICKS
-  const lateralOffset = player.focus ? 4 : 7
-  const damage = 2 + Math.max(0, emitter.powerLevel - 1)
-  for (const offset of [-lateralOffset, lateralOffset]) {
+  const power = Math.max(1, Math.min(3, Math.floor(emitter.powerLevel)))
+  const spread = player.focus ? 4 : 8
+  const offsets =
+    power === 1
+      ? [-spread, spread]
+      : power === 2
+        ? [-spread, 0, spread]
+        : [-spread * 2, -spread, 0, spread, spread * 2]
+  const damage = power >= 3 ? 3 : 2
+  for (const offset of offsets) {
     projectiles.spawn({
       kind: 'player',
       x: player.x + offset,
@@ -34,5 +41,15 @@ export function stepBaselineWeapon(
       lifetimeTicks: 90,
     })
   }
-  return 2
+  return offsets.length
+}
+
+export function gainWeaponPower(emitter: WeaponEmitterState, amount = 1): number {
+  emitter.powerLevel = Math.max(1, Math.min(3, emitter.powerLevel + Math.max(0, Math.floor(amount))))
+  return emitter.powerLevel
+}
+
+export function loseWeaponPower(emitter: WeaponEmitterState, amount = 1): number {
+  emitter.powerLevel = Math.max(1, emitter.powerLevel - Math.max(0, Math.floor(amount)))
+  return emitter.powerLevel
 }

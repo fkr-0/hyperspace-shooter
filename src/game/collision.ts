@@ -20,6 +20,7 @@ export function classifyPlayerProjectileContact(
 export function resolveHostileProjectileContacts(
   player: PlayerState,
   projectiles: ProjectileSystem,
+  options?: Readonly<{ canTakeHit?: boolean; canGraze?: boolean }>,
 ): Readonly<{ hits: number; grazes: number }> {
   let hits = 0
   let grazes = 0
@@ -31,11 +32,17 @@ export function resolveHostileProjectileContacts(
   for (const projectile of hostile) {
     const contact = classifyPlayerProjectileContact(player, projectile)
     if (contact === 'hit') {
-      hits += 1
-      projectiles.despawn(projectile)
+      if (options?.canTakeHit ?? true) {
+        hits += 1
+        projectiles.despawn(projectile)
+      }
       continue
     }
-    if (contact === 'graze' && projectile.grazedByPlayerId !== player.id) {
+    if (
+      (options?.canGraze ?? true) &&
+      contact === 'graze' &&
+      projectile.grazedByPlayerId !== player.id
+    ) {
       projectile.grazedByPlayerId = player.id
       grazes += 1
     }

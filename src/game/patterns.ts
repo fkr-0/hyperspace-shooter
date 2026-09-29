@@ -73,12 +73,15 @@ export function stepPatternEmitter(
       speed += speedRoll.value
     }
 
+    const acceleration = definition.acceleration ?? 0
     projectiles.spawn({
       kind: 'enemy',
       x: origin.x,
       y: origin.y,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
+      ax: Math.cos(angle) * acceleration,
+      ay: Math.sin(angle) * acceleration,
       radius: definition.radius ?? 4,
       lifetimeTicks: definition.lifetimeTicks ?? 360,
     })

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "ocpTask": "HYPERBLAST-LATE-BOSS-ATLAS-20260914",
+  "atlas": {
+    "path": "src/assets/hyperblast-late-bosses.png",
+    "sha256": "29fa0660401abe95bb3360e02da8d8f5ba7fea964c9ee4c9a6d4d7c778227313",
+    "size": [192, 128],
+    "frameSize": [48, 32],
+    "grid": [4, 4]
+  },
+  "rows": [
+    {
+      "row": 0,
+      "boss": "brood-lens",
+      "acceptedSource": "art/late-bosses/sources/brood-lens.png",
+      "acceptedSourceSha256": "1fcc6e106339d32e7408984512352f8d4aea4acecfeb649ef2768dba385df357",
+      "generatedImageId": "868099c5-f967-492b-aa5b-8fa8dbe3525d",
+      "generatedFileId": "file_00000000464481f4b77db639f5de55ad",
+      "generatedTitle": "a_wide_horizontal_image_on_a_transparent_backgroun.png",
+      "processing": "four horizontal poses retained; alpha noise trimmed; normalized into four 96x64 source cells, then 48x32 atlas cells with nearest-neighbor"
+    },
+    {
+      "row": 1,
+      "boss": "queen-recursor",
+      "acceptedSource": "art/late-bosses/sources/queen-recursor.png",
+      "acceptedSourceSha256": "8a77620e1dabe8f0dbe4fc08605bd2a257056b737305db04ae629ae2e6684634",
+      "generatedImageId": "6e4501da-1313-457f-8e97-b204c15dd468",
+      "generatedFileId": "file_00000000c11c81f4ae727ff397bdea16",
+      "generatedTitle": "a_clean_transparent_background_sprite_sheet_style.png",
+      "processing": "four horizontal poses retained; each pose rotated to nose-right atlas convention; normalized into four 96x64 source cells, then 48x32 atlas cells with nearest-neighbor"
+    },
+    {
+      "row": 2,
+      "boss": "echo-composite",
+      "acceptedSource": "art/late-bosses/sources/echo-composite.png",
+      "acceptedSourceSha256": "9eb76d2312d68d85ca46db6745fcd891d848dbe0630859048fda4409bc3ab18b",
+      "generatedImageId": "03a84484-cf0e-4f15-980b-5713fd6bddde",
+      "generatedFileId": "file_000000006b8881f4863e9f0a9f4d6bea",
+      "generatedTitle": "a_wide_image_on_a_transparent_checkerboard_backgro.png",
+      "processing": "the echo-composite four-pose row was isolated from a generation candidate; only the per-boss strip is retained; normalized into four 96x64 source cells, then 48x32 atlas cells with nearest-neighbor"
+    },
+    {
+      "row": 3,
+      "boss": "hyperblast-engine",
+      "acceptedSource": "art/late-bosses/sources/hyperblast-engine.png",
+      "acceptedSourceSha256": "ec8cb6de0e600b2498bbc57405b3f9426d2dd73ed776d596b2eb78152ce37bf7",
+      "generatedImageId": "96c70401-2773-41af-bb70-7e916412c728",
+      "generatedFileId": "file_0000000020e4824685f9ad6eac5a1589",
+      "generatedTitle": "a_clean_transparent_background_pixel_art_sprite_sh.png",
+      "processing": "the hyperblast-engine four-pose row was isolated from a generation candidate; only the per-boss strip is retained; normalized into four 96x64 source cells, then 48x32 atlas cells with nearest-neighbor"
+    }
+  ]
+}

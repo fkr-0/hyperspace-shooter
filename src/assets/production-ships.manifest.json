@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "sheets": [
+    {
+      "id": "hyperblast-production-ships",
+      "file": "__VITE_ASSET_URL__",
+      "frameSize": [48, 32],
+      "grid": { "columns": 4, "rows": 90 },
+      "animations": {
+        "player-idle": { "frames": 4, "fps": 8, "loop": true, "order": [0, 1, 2, 3], "anchor": [24, 16] },
+        "player-thrust": { "frames": 4, "fps": 12, "loop": true, "order": [4, 5, 6, 7], "anchor": [24, 16] },
+        "shield": { "frames": 4, "fps": 6, "loop": true, "order": [40, 41, 42, 43], "anchor": [24, 16] },
+        "chaser": { "frames": 4, "fps": 9, "loop": true, "order": [80, 81, 82, 83], "anchor": [24, 16] },
+        "drifter": { "frames": 4, "fps": 7, "loop": true, "order": [120, 121, 122, 123], "anchor": [24, 16] },
+        "municipal-ghost": { "frames": 4, "fps": 5, "loop": true, "order": [160, 161, 162, 163], "anchor": [24, 16] },
+        "dockmaster-array": { "frames": 4, "fps": 6, "loop": true, "order": [200, 201, 202, 203], "anchor": [24, 16] },
+        "vector-warden": { "frames": 4, "fps": 5, "loop": true, "order": [240, 241, 242, 243], "anchor": [24, 16] },
+        "turret": { "frames": 4, "fps": 5, "loop": true, "order": [280, 281, 282, 283], "anchor": [24, 16] },
+        "relay-scorpion": { "frames": 4, "fps": 5, "loop": true, "order": [320, 321, 322, 323], "anchor": [24, 16] },
+        "helix-foundry": { "frames": 4, "fps": 7, "loop": true, "order": [324, 325, 326, 327], "anchor": [24, 16] },
+        "skyline-pursuer": { "frames": 4, "fps": 10, "loop": true, "order": [84, 85, 86, 87], "anchor": [24, 16] }
+      },
+      "source": {
+        "provenance": "Imported byte-identically from read-only legacy Hyperblast production ship atlas",
+        "sourceSha256": "68cea95a39d4ef6e328725fcfeb2c781a05b3e3adde5063fdb299c99b5f75741"
+      }
+    }
+  ]
+}

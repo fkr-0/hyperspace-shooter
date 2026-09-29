@@ -17,6 +17,9 @@ export function createPlayerState(): PlayerState {
     damageRadius: PLAYER.damageRadius,
     grazeRadius: PLAYER.grazeRadius,
     shotCooldownTicks: 0,
+    lives: PLAYER.startingLives,
+    bombs: PLAYER.startingBombs,
+    invulnerableTicks: 0,
   }
 }
 
@@ -25,6 +28,7 @@ function clamp(value: number, minimum: number, maximum: number): number {
 }
 
 export function stepPlayer(player: PlayerState, input: PlayerInput, delta: number): void {
+  if (player.invulnerableTicks > 0) player.invulnerableTicks -= 1
   player.previousX = player.x
   player.previousY = player.y
   player.focus = input.focus
@@ -42,4 +46,15 @@ export function stepPlayer(player: PlayerState, input: PlayerInput, delta: numbe
   player.vy = directionY * speed
   player.x = clamp(player.x + player.vx * delta, PLAYFIELD.left, PLAYFIELD.right)
   player.y = clamp(player.y + player.vy * delta, PLAYFIELD.top, PLAYFIELD.bottom)
+}
+
+export function respawnPlayer(player: PlayerState): void {
+  player.x = PLAYER.startX
+  player.y = PLAYER.startY
+  player.previousX = player.x
+  player.previousY = player.y
+  player.vx = 0
+  player.vy = 0
+  player.shotCooldownTicks = 0
+  player.invulnerableTicks = PLAYER.respawnInvulnerabilityTicks
 }

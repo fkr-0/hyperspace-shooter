@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "sheets": [
+    {
+      "id": "hyperblast-late-bosses",
+      "file": "__VITE_ASSET_URL__",
+      "frameSize": [48, 32],
+      "grid": { "columns": 4, "rows": 4 },
+      "animations": {
+        "brood-lens": { "frames": 4, "fps": 6, "loop": true, "order": [0, 1, 2, 3], "anchor": [24, 16] },
+        "queen-recursor": { "frames": 4, "fps": 6, "loop": true, "order": [4, 5, 6, 7], "anchor": [24, 16] },
+        "echo-composite": { "frames": 4, "fps": 7, "loop": true, "order": [8, 9, 10, 11], "anchor": [24, 16] },
+        "hyperblast-engine": { "frames": 4, "fps": 8, "loop": true, "order": [12, 13, 14, 15], "anchor": [24, 16] }
+      },
+      "source": {
+        "provenance": "ChatGPT image generation; accepted per-boss strips normalized with nearest-neighbor into a dedicated late-boss atlas",
+        "sourceSha256": "29fa0660401abe95bb3360e02da8d8f5ba7fea964c9ee4c9a6d4d7c778227313"
+      }
+    }
+  ]
+}

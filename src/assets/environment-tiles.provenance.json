@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "task": {
+    "ocpTask": "HYPERBLAST-STAGE-ENVIRONMENT-TILES-20260914",
+    "catalogPrompt": "hyperblast-stage-environment-tiles-v1",
+    "dispatchAttempt": "d3fdba1559f1476988f792b2830afa01"
+  },
+  "renderer": {
+    "kind": "chatgpt-image-generation",
+    "status": "transfer-blocked",
+    "note": "ChatGPT image generation produced the five requested visual themes, but the direct renderer returned composite gallery images instead of five one-image outputs. Those composites were rejected as production sources. The host-side one-job-per-image queue then failed closed before dispatch because browser RSS exceeded its 4096 MiB guard. No placeholder or procedural substitute was accepted."
+  },
+  "requiredSources": [
+    {
+      "theme": "neon-drift",
+      "path": "src/assets/environment/neon_drift_expanse.source.png",
+      "runtimePath": "src/assets/environment/neon_drift_expanse.png",
+      "status": "missing-transfer-blocked"
+    },
+    {
+      "theme": "orbital-furnace",
+      "path": "src/assets/environment/orbital_furnace.source.png",
+      "runtimePath": "src/assets/environment/orbital_furnace.png",
+      "status": "missing-transfer-blocked"
+    },
+    {
+      "theme": "chrome-meridian",
+      "path": "src/assets/environment/chrome_meridian.source.png",
+      "runtimePath": "src/assets/environment/chrome_meridian.png",
+      "status": "missing-transfer-blocked"
+    },
+    {
+      "theme": "verdant-hive",
+      "path": "src/assets/environment/verdant_hive.source.png",
+      "runtimePath": "src/assets/environment/verdant_hive.png",
+      "status": "missing-transfer-blocked"
+    },
+    {
+      "theme": "hyperglass-corridor",
+      "path": "src/assets/environment/hyperglass_corridor.source.png",
+      "runtimePath": "src/assets/environment/hyperglass_corridor.png",
+      "status": "missing-transfer-blocked"
+    }
+  ],
+  "normalizationContract": {
+    "runtimeSize": [256, 256],
+    "method": "deterministic source-only resample/mirror periodicization; no invented art",
+    "acceptedSourcesMustRemain": true
+  }
+}

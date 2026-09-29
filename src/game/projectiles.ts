@@ -88,6 +88,14 @@ export function createProjectileSystem(capacity = PROJECTILE_CAPACITY) {
     clear(): number {
       return pool.clear()
     },
+    clearKind(kind: Projectile['kind']): number {
+      let cleared = 0
+      for (const projectile of pool.activeValues()) {
+        if (projectile.kind !== kind) continue
+        if (pool.despawn(projectile)) cleared += 1
+      }
+      return cleared
+    },
     snapshot() {
       return pool.snapshot()
     },
