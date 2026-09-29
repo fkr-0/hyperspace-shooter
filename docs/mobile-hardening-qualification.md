@@ -1,9 +1,26 @@
 # Hyperblast Shooter mobile hardening qualification
 
 Date: 2026-09-29 (requalified; original qualification 2026-09-28)
-Current HEAD before this evidence-only update: 11c5841d6fbd49f3d63d5814b42178f06eab1e1a
+Current HEAD before this evidence-only update: 84f205261edc934a622c59b87e40094e6b5939fc
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
+
+## 2026-09-29 13:23 CEST current-head requalification
+
+Fresh verification at HEAD `84f205261edc934a622c59b87e40094e6b5939fc` reproduced no mobile gameplay, input, rendering, persistence, or lifecycle defect. This pickup therefore refreshes qualification evidence only and leaves product source unchanged.
+
+- Focused mobile/lifecycle/storage suite: 4 files, 16/16 tests passed — mobile touch 9/9, transient input lifecycle 2/2, high-score persistence 4/4, WebGL lifecycle 1/1.
+- Full `pnpm check`: PASS — TypeScript, Biome lint (143 files), Vitest 24/24 files with 79/79 tests, and production Vite build.
+- Deterministic stage soaks remained bounded at maximum projectile counts 150, 168, 215, 158, and 187 for stages 1–5. Mean simulation-step costs in this run were approximately 0.1785, 0.1330, 0.0878, 0.0624, and 0.0527 ms respectively.
+- Production build transformed 747 modules; main JS is 488.72 kB / 145.81 kB gzip and CSS is 7.54 kB / 2.24 kB gzip. Production ship and late-boss atlases remain 21.87 kB and 38.04 kB.
+- Managed Chromium iPhone-15 emulation measured 393×852 CSS px at DPR 3 with document width 393 px. The 480×720 logical Pixi surface used a 960×1440 backing canvas and runtime render resolution 2, confirming the mobile DPR cap.
+- The same managed browser reached active Stage 1 combat at 844×390. Document scroll width was 829 px for an 844 px viewport, so no horizontal overflow was present. Runtime diagnostics had advanced to tick 550 with production sprite/VFX atlases and WebGL state `ready`.
+- Active-gameplay rolling frame-work diagnostics over the latest 240 frames measured about 0.371 ms mean, 0.8 ms p95, and 2.6 ms max on this headless desktop Chromium run. This is implementation evidence, not physical-phone sustained-60-FPS certification.
+- Browser-backed persistence remained active (`usingFallback=false`, schema version 2). Restricted/private-storage failure handling remains covered by the 4 persistence tests.
+- ABC's iPhone device preset still reports `navigator.maxTouchPoints=0` and `(pointer: coarse)=false`; native touch-capability detection and true simultaneous-finger latency therefore remain physical-device qualification gaps. Multi-touch move+fire semantics remain covered by the 9 runtime-pointer touch tests and prior synthetic PointerEvent browser evidence in this document.
+- Physical iOS Safari / Android Chrome certification remains unclaimed: native multi-touch latency, thermal/mobile-GPU frame pacing, BFCache/background recovery, private-mode storage behavior, and a real-time title → gameplay → result → persisted-high-score run still require a device lab.
+
+No gameplay/input/render/persistence source file was changed because current verification did not reproduce a defect.
 
 ## 2026-09-29 12:58 CEST current-head requalification
 
