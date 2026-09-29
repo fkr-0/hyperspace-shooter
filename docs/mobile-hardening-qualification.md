@@ -1,9 +1,24 @@
 # Hyperblast Shooter mobile hardening qualification
 
 Date: 2026-09-29 (requalified; original qualification 2026-09-28)
-Current HEAD: 20538b1bab8c3eb0b1d4566e9fd7bd7e28e3cc61
+Current HEAD before this evidence-only update: 11c5841d6fbd49f3d63d5814b42178f06eab1e1a
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
+
+## 2026-09-29 current pickup verification
+
+Fresh verification against the live integrated dirty tree at `11c5841d6fbd49f3d63d5814b42178f06eab1e1a` reproduced no mobile-source defect. No gameplay, rendering, input, persistence, or styling source file was changed in this pickup.
+
+- Focused mobile/storage verification: 3 test files, 15/15 tests passed (`mobile-touch` 9/9, transient input lifecycle 2/2, high-score persistence 4/4).
+- Full `pnpm check`: pass.
+- TypeScript typecheck: pass.
+- Biome lint: pass, 135 files checked.
+- Vitest: 22 test files, 74/74 tests passed.
+- Production Vite build: pass; 745 modules transformed; main JS 475.54 kB / 140.71 kB gzip, CSS 6.22 kB / 1.89 kB gzip.
+- Deterministic soak samples remained bounded: Stage 1 max 150 projectiles / 10 enemies; Stage 2 168 / 10; Stage 3 215 / 10; Stage 4 158 / 8; Stage 5 187 / 10. Mean simulation-step cost reported by the soak tests remained below 0.22 ms for every stage in this run.
+- The repository still has a substantial unrelated inherited dirty tree; this qualification update intentionally does not stage or rewrite it.
+
+The device-lab limitations documented below remain unchanged: no physical iOS Safari/Android Chrome run was available in this pickup, and the complete real-time title → gameplay → result → persisted-high-score browser flow was not re-exercised end-to-end.
 
 ## 2026-09-29 requalification
 
