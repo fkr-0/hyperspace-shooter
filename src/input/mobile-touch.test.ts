@@ -25,29 +25,29 @@ describe('mobile touch input mapping', () => {
     ).toBeNull()
   })
 
-  it('converts a drag target into deterministic directional input with precision focus', () => {
+  it('uses normal-speed pursuit for distant drag targets', () => {
     expect(touchInputTowardTarget({ x: 100, y: 200 }, { x: 150, y: 120 }, { deadZone: 8 })).toEqual({
       left: false,
       right: true,
       up: true,
       down: false,
-      focus: true,
+      focus: false,
       fire: false,
       bomb: false,
     })
   })
 
-  it('keeps motion neutral inside the dead zone while preserving fire and special actions', () => {
+  it('enables precision focus near the drag target while preserving fire and special actions', () => {
     expect(
       touchInputTowardTarget(
         { x: 100, y: 200 },
-        { x: 105, y: 196 },
-        { deadZone: 8, fire: true, bomb: true },
+        { x: 140, y: 160 },
+        { deadZone: 8, focusRadius: 72, fire: true, bomb: true },
       ),
     ).toEqual({
       left: false,
-      right: false,
-      up: false,
+      right: true,
+      up: true,
       down: false,
       focus: true,
       fire: true,

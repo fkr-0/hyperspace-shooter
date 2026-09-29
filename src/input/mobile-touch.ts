@@ -55,17 +55,19 @@ export function clientToLogical(
 export function touchInputTowardTarget(
   player: LogicalPoint,
   target: LogicalPoint | null,
-  options?: Readonly<{ deadZone?: number; fire?: boolean; bomb?: boolean }>,
+  options?: Readonly<{ deadZone?: number; focusRadius?: number; fire?: boolean; bomb?: boolean }>,
 ): PlayerInput {
   const deadZone = Math.max(0, options?.deadZone ?? 8)
   const dx = target ? target.x - player.x : 0
   const dy = target ? target.y - player.y : 0
+  const focusRadius = Math.max(deadZone, options?.focusRadius ?? 72)
+  const focus = target !== null && dx * dx + dy * dy <= focusRadius * focusRadius
   return Object.freeze({
     left: dx < -deadZone,
     right: dx > deadZone,
     up: dy < -deadZone,
     down: dy > deadZone,
-    focus: target !== null,
+    focus,
     fire: options?.fire === true,
     bomb: options?.bomb === true,
   })
@@ -87,6 +89,7 @@ export function createMobileTouchController(options: Readonly<{
   logicalWidth: number
   logicalHeight: number
   deadZone?: number
+  focusRadius?: number
 }>): MobileTouchController {
   const knownTouchIds = new Set<number>()
   let suppressActiveContacts = false
@@ -142,6 +145,7 @@ export function createMobileTouchController(options: Readonly<{
       const firing = fireContacts.length > 0 || (autoFire && target !== null)
       const input = touchInputTowardTarget(player, target, {
         deadZone: options.deadZone,
+        focusRadius: options.focusRadius,
         fire: firing,
         bomb: specialPressed,
       })
