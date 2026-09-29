@@ -5,6 +5,22 @@ Current HEAD before this evidence-only update: 11c5841d6fbd49f3d63d5814b42178f06
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
 
+## 2026-09-29 post-narrative mobile revalidation
+
+Fresh verification at HEAD `2a9a668e28171af4a54f028cabae2b376926006b` rechecked mobile behavior after the narrative/story overlay integration. No product-source mobile regression was reproduced.
+
+- Full `pnpm check`: pass — TypeScript, Biome, 23/23 Vitest files with 78/78 tests, and the Vite production build.
+- 320×568 portrait touch presentation: document width 320 px with no horizontal overflow; playfield about 282.7×424.0 px; fire zone about 65.0×101.8 px; special zone about 50.9×67.8 px. The tall title card remains scrollable inside the playfield overlay rather than forcing page-width overflow.
+- 844×390 short landscape touch presentation: document exactly 844×390 with no page overflow; playfield about 252.5×378.8 px; telemetry about 572.3×378.8 px; fire zone about 58.1×90.9 px; special zone about 45.5×60.6 px.
+- iPhone-15-sized emulation produced a 393×852 viewport at DPR 3. The 480×720 logical Pixi surface used a 960×1440 backing canvas, preserving the intentional render-resolution cap of 2.
+- Managed Chromium title → gameplay smoke passed: after activating START STAGE 1, diagnostics reported `mode=combat` and advancing fixed-step ticks.
+- Rolling runtime frame-work sample in active gameplay (latest 240 frames): mean about 0.56 ms, p95 about 1.0 ms, max about 1.4 ms. This remains desktop/headless evidence, not physical-phone sustained-FPS certification.
+- Explicit `WEBGL_lose_context` exercise recovered cleanly: runtime diagnostics advanced from 0/0 to `contextLosses=1`, `contextRestores=1`, with final `contextState=ready`.
+- Normal preview persistence diagnostics remained on the browser-backed store (`usingFallback=false`, schema version 2). Restricted-storage fallback remains covered by the 4/4 high-score persistence tests.
+- ABC's Chromium device preset still reports `navigator.maxTouchPoints=0` and `(pointer: coarse)=false`; native touch-capability auto-detection therefore still requires physical-device verification. Multi-touch semantics remain covered by the runtime-pointer tests and the prior synthetic PointerEvent browser probe.
+
+No product files were changed in this revalidation. The only remaining material qualification gap is a physical iOS Safari + Android Chrome device-lab run for true multi-touch latency, thermal behavior, background/BFCache resume, private-mode storage behavior, and sustained device GPU frame pacing.
+
 ## 2026-09-29 live mobile-hardening pickup
 
 Fresh verification at HEAD `854966c7fe70ae3bb8391c531508f08471d2f6e4` found the requested mobile hardening already landed in the tracked mobile/input/persistence history. The currently dirty story/audio integration owns `src/main.ts` and `src/style.css` through an active ws-bridge claim, so this pickup preserved those concurrent edits and did not replay already-landed mobile source changes.
