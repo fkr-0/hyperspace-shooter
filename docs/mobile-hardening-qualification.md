@@ -5,6 +5,23 @@ Current HEAD before this evidence-only update: 11c5841d6fbd49f3d63d5814b42178f06
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
 
+## 2026-09-29 11:36 CEST fresh autonomous requalification
+
+Fresh verification at HEAD `bec82f9cd72b5b666c82c3ff166ca6fc7f578ef7` reproduced no mobile source defect. The requested mobile implementation remains present, so this run updates qualification evidence only.
+
+- Focused mobile/lifecycle/storage suite: 4 files, 16/16 tests passed — mobile touch 9/9, transient input lifecycle 2/2, high-score persistence 4/4, WebGL lifecycle 1/1.
+- Full verification passed: TypeScript typecheck, Biome lint (141 files), Vitest 24/24 files with 79/79 tests, and production Vite build (747 modules).
+- Build output: main JS 488.72 kB / 145.81 kB gzip; CSS 7.54 kB / 2.24 kB gzip; production ship atlas 21.87 kB; late-boss atlas 38.04 kB.
+- Deterministic soak remained bounded. Maximum projectile counts were 150, 168, 215, 158, and 187 for stages 1–5; reported mean simulation-step cost ranged from about 0.087 ms to 0.180 ms in this run.
+- Managed Chromium iPhone-15-sized emulation: 393×852 CSS px at DPR 3; document width 393 px (no horizontal overflow); playfield about 378.6×567.9 px; canvas backing 960×1440; runtime render resolution correctly capped at 2.
+- Forced touch presentation in the same portrait viewport measured fire and special zones at about 87.1×136.3 px and 68.1×90.9 px respectively.
+- Short landscape viewport 844×390 reached active Stage 1 gameplay. Runtime diagnostics sampled 240 frames at about 0.375 ms mean frame work, 0.8 ms p95, and 1.3 ms max; production ship/VFX atlases were active and WebGL context state remained `ready`.
+- Normal browser persistence remained on the browser-backed store (`usingFallback=false`, schema version 2). Restricted/private-storage failure handling remains covered by the 4 persistence tests.
+- The ABC Chromium iPhone preset still reports `navigator.maxTouchPoints=0` and `(pointer: coarse)=false`; therefore native mobile touch-capability detection, real simultaneous finger latency, Safari private-mode behavior, background/BFCache recovery, thermal throttling, and sustained physical-device GPU frame pacing remain device-lab qualification gaps.
+- This browser session did not play Stage 1 through to a real-time stage-clear/high-score UI result. Title → gameplay and live score progression were exercised; stage-clear/result and persistence behavior remain covered by the deterministic stage/simulation and persistence suites.
+
+No product source file was changed because current verification did not reproduce a defect.
+
 ## 2026-09-29 current mobile hardening verification
 
 Fresh verification at HEAD `9130419d664e744ce714e868c7d9c1606ae5c065` reproduced no mobile gameplay, rendering, persistence, or lifecycle defect, so no product-source code was rewritten.
