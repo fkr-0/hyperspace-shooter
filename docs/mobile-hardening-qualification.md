@@ -5,6 +5,22 @@ Current HEAD before this evidence-only update: 84f205261edc934a622c59b87e40094e6
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
 
+## 2026-09-29 14:40 CEST autonomous requalification
+
+Fresh verification at HEAD `dff74b33205b458ae943d285061ee8eec2cb70a7` reproduced no mobile gameplay, touch-input, persistence, rendering-lifecycle, or responsive-layout defect. Product source therefore remains unchanged; this section records only new qualification evidence.
+
+- Full `pnpm check`: PASS — TypeScript, Biome lint (144 files), Vitest 24/24 files with 79/79 tests, and production Vite build.
+- Focused coverage inside that run remains green: mobile touch 9/9, high-score persistence 4/4, transient input lifecycle 2/2, and WebGL context lifecycle 1/1.
+- Deterministic stage soaks remained bounded at maximum projectile counts 150, 168, 215, 158, and 187 for stages 1–5. Fresh mean simulation-step samples were approximately 0.178, 0.067, 0.056, 0.050, and 0.065 ms respectively; terminal Stage 4/5 soak means were approximately 0.148 and 0.110 ms.
+- Production build transformed 747 modules. Main JS remains 488.72 kB / 145.81 kB gzip and CSS 7.54 kB / 2.24 kB gzip; production ship and late-boss atlases remain 21.87 kB and 38.04 kB.
+- Fresh managed Chromium portrait smoke at 393×852 produced a 361.6×543.4 CSS-pixel playfield canvas with no horizontal overflow (`scrollWidth=378`, `clientWidth=378`). This specific fresh browser session used DPR 1; the current DPR-3 → render-resolution-2 cap is already covered by the immediately preceding current-head qualification evidence below.
+- The same browser entered Stage 1 and was resized to 844×390. The fixed-step simulation advanced into the Relay Scorpion midboss (`tick=1573`) with production sprite/VFX atlases loaded, browser-backed high-score storage active (`usingFallback=false`, schema v2), and no page errors.
+- Active-game frame-work diagnostics over the latest 240 frames measured approximately 0.333 ms mean, 0.5 ms p95, and 1.1 ms max before the lifecycle probe. After the explicit context restore probe the rolling sample was approximately 0.356 ms mean, 0.5 ms p95, and 7.4 ms max. These are headless desktop Chromium work timings, not physical-device FPS certification.
+- Explicit `WEBGL_lose_context` exercise incremented runtime context loss/restore counters from 0/0 to 1/1 and returned `contextState=ready`; simulation continued advancing afterward.
+- Native touch capability still cannot be certified in this managed Chromium session (`touchCapable=false` / coarse pointer false). True simultaneous-finger latency, iOS Safari private-mode behavior, BFCache/background recovery on real mobile browsers, sustained GPU frame pacing, and thermal behavior remain device-lab qualifications.
+
+No product source file was changed because no reproducible defect was found.
+
 ## 2026-09-29 13:23 CEST current-head requalification
 
 Fresh verification at HEAD `84f205261edc934a622c59b87e40094e6b5939fc` reproduced no mobile gameplay, input, rendering, persistence, or lifecycle defect. This pickup therefore refreshes qualification evidence only and leaves product source unchanged.
