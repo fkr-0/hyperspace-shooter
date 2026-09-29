@@ -22,6 +22,7 @@ import { createMobileTouchController } from './input/mobile-touch'
 import { createBrowserHighScoreService } from './persistence/high-scores'
 import { installEnvironmentTileBackground } from './render/environment-tiles'
 import { installHyperblastPixiRenderer } from './render/pixi-game'
+import { installWebglContextLifecycle } from './render/webgl-lifecycle'
 import './style.css'
 
 const app = document.querySelector<HTMLDivElement>('#app')
@@ -219,6 +220,29 @@ const clearFallbackHeldCodes = () => fallbackHeldCodes.clear()
 window.addEventListener('keydown', onFallbackKeyDown)
 window.addEventListener('keyup', onFallbackKeyUp)
 window.addEventListener('blur', clearFallbackHeldCodes)
+
+let resumeAfterWebglRestore = false
+shell.dataset.webgl = 'ready'
+const webglLifecycle = installWebglContextLifecycle(runtime.canvas, {
+  onLost: () => {
+    shell.dataset.webgl = 'lost'
+    mobileTouch.reset()
+    pointer.reset()
+    keyboard.reset()
+    fallbackHeldCodes.clear()
+    if (!simulation.state.paused) {
+      simulation.togglePause()
+      resumeAfterWebglRestore = true
+    }
+    updateHud()
+  },
+  onRestored: () => {
+    shell.dataset.webgl = 'ready'
+    if (resumeAfterWebglRestore && simulation.state.paused) simulation.togglePause()
+    resumeAfterWebglRestore = false
+    updateHud()
+  },
+})
 
 function isGameplayKeyHeld(code: string): boolean {
   return keyboard.isHeld(code) || fallbackHeldCodes.has(code)
@@ -461,6 +485,7 @@ diagnosticsWindow.__hyperblastDiagnostics = () => ({
     vfxSheetId: renderer.vfxSheetId,
     runtime: runtime.snapshot(),
     performance: runtime.performanceSnapshot(),
+    contextState: shell.dataset.webgl ?? 'ready',
   },
   audio: audio?.snapshot() ?? { started: false },
   mobile: {
@@ -497,6 +522,7 @@ window.addEventListener('pagehide', (event) => {
   window.removeEventListener('keydown', onFallbackKeyDown)
   window.removeEventListener('keyup', onFallbackKeyUp)
   window.removeEventListener('blur', clearFallbackHeldCodes)
+  webglLifecycle.destroy()
   pointer.destroy()
   keyboard.destroy()
   environmentBackground.destroy()
