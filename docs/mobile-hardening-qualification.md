@@ -5,6 +5,19 @@ Current HEAD before this evidence-only update: 11c5841d6fbd49f3d63d5814b42178f06
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
 
+## 2026-09-29 12:58 CEST current-head requalification
+
+Fresh verification at HEAD `1e96bb3bd2ad88f0358726ce9b5f05dd12c34f1f` reproduced no mobile source defect, so this pickup records current evidence only.
+
+- `pnpm check`: PASS — TypeScript, Biome lint (142 files), Vitest 24/24 files with 79/79 tests, and production Vite build.
+- Mobile/lifecycle coverage remains green: touch mapping 9/9, transient input lifecycle 2/2, high-score persistence 4/4, WebGL context lifecycle 1/1.
+- Fresh deterministic stage soaks stayed bounded at maximum projectile counts 150, 168, 215, 158, and 187 for stages 1–5. Reported mean simulation-step costs in this run ranged from about 0.039 ms to 0.098 ms for the stage soak suite; the separate terminal-phase soak samples remained below 0.12 ms mean step cost.
+- Production build transformed 747 modules; main JS is 488.72 kB / 145.81 kB gzip and CSS is 7.54 kB / 2.24 kB gzip. Production ship and late-boss atlases remain compact at 21.87 kB and 38.04 kB.
+- The already-recorded current-browser evidence remains applicable: responsive 320×568, 393×852 DPR-3, and 844×390 layouts without horizontal overflow; Pixi backing resolution capped at 2; synthetic concurrent move+fire PointerEvents; explicit WebGL loss/restore recovery; and browser-backed storage with restricted-storage fallback covered by tests.
+- Physical iOS Safari / Android Chrome certification remains unclaimed. Real-device touch latency, sustained mobile-GPU/thermal frame pacing, native BFCache/background recovery, private-mode storage behavior, and a real-time title → gameplay → result → persisted-high-score run remain device-lab gaps.
+
+No gameplay/input/render/persistence source file was changed because current verification did not reproduce a defect.
+
 ## 2026-09-29 11:36 CEST fresh autonomous requalification
 
 Fresh verification at HEAD `bec82f9cd72b5b666c82c3ff166ca6fc7f578ef7` reproduced no mobile source defect. The requested mobile implementation remains present, so this run updates qualification evidence only.
