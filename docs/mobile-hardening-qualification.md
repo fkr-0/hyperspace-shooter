@@ -5,6 +5,25 @@ Current HEAD before this evidence-only update: 11c5841d6fbd49f3d63d5814b42178f06
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
 
+## 2026-09-29 live mobile-hardening pickup
+
+Fresh verification at HEAD `854966c7fe70ae3bb8391c531508f08471d2f6e4` found the requested mobile hardening already landed in the tracked mobile/input/persistence history. The currently dirty story/audio integration owns `src/main.ts` and `src/style.css` through an active ws-bridge claim, so this pickup preserved those concurrent edits and did not replay already-landed mobile source changes.
+
+- Focused mobile/storage suite: 3 files, 15/15 tests passed (`mobile-touch` 9/9, transient lifecycle 2/2, high-score persistence 4/4).
+- Full `pnpm check`: pass.
+- TypeScript: pass.
+- Biome: pass, 138 files checked.
+- Vitest: 23 files, 78/78 tests passed.
+- Production build: pass, 746 modules transformed; main JS 488.09 kB / 145.61 kB gzip, CSS 7.54 kB / 2.24 kB gzip.
+- Deterministic soak samples remained bounded: Stage 1 max 150 projectiles / 10 enemies; Stage 2 168 / 10; Stage 3 215 / 10; Stage 4 158 / 8; Stage 5 187 / 10. The reported mean simulation-step cost stayed below 0.15 ms for all stage soak samples in this run.
+- Managed Chromium, iPhone-15-sized portrait emulation: 393×852 CSS px, DPR 3, document width 393 px, playfield about 378.6×567.9 px, backing canvas 960×1440, runtime render resolution 2.
+- Managed Chromium landscape: 844×390 CSS px, document 844×390 with no page overflow, playfield about 252.5×378.8 px, fire zone about 58.1×90.9 px, special zone about 45.5×60.6 px.
+- The live browser runtime advanced from title into active gameplay during the landscape sample; diagnostics remained available and the Pixi host continued running.
+- The current Chromium device preset still reports `navigator.maxTouchPoints = 0` and `(pointer: coarse) = false`; therefore automatic touch-capability detection cannot be truthfully certified from this preset. Runtime-pointer multi-touch behavior remains covered by the 9 deterministic controller tests and prior synthetic PointerEvent browser evidence documented below.
+- One first cold-start browser sample observed the Vite shell before the module graph had populated `#app`; a normal reload immediately produced the full game with no browser console/page errors. This was not reproduced as a persistent game defect.
+
+No mobile-source defect was reproduced, so this pickup changes qualification evidence only. Physical iOS Safari/Android Chrome latency, thermal/GPU sustained-60-FPS behavior, and a real-device title → gameplay → result → persisted-high-score run remain device-lab qualification items.
+
 ## 2026-09-29 current pickup verification
 
 Fresh verification against the live integrated dirty tree at `11c5841d6fbd49f3d63d5814b42178f06eab1e1a` reproduced no mobile-source defect. No gameplay, rendering, input, persistence, or styling source file was changed in this pickup.
