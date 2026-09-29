@@ -1,7 +1,7 @@
 # Hyperblast Shooter mobile hardening qualification
 
 Date: 2026-09-29 (requalified; original qualification 2026-09-28)
-Current HEAD: bc63fc02712ee67fbe999e39d1b129be85cceb7f
+Current HEAD: 20538b1bab8c3eb0b1d4566e9fd7bd7e28e3cc61
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
 
@@ -15,15 +15,17 @@ The mobile implementation is now tracked through the following scoped commits on
 - `75cb99a` — transient touch-input lifecycle recovery across blur/visibility suspension.
 - `bc63fc0` — drag pursuit uses normal movement at distance and precision focus near the target, avoiding slow full-screen pursuit on phones.
 
-Fresh verification against the current integrated dirty tree:
+Fresh R20 verification against the current integrated dirty tree:
 
+- Canonical OCP task: `HYPERBLAST-GAMEPLAY-R20-20260929`.
+- No new mobile source defect reproduced; existing dirty campaign/render integration was preserved.
 - TypeScript typecheck: pass.
-- Biome lint: pass, 133 files checked.
-- Vitest: 22 test files, 74/74 tests passed.
+- Biome lint: pass, 134 files checked.
+- Vitest: 22 test files, 74/74 tests passed (fresh R20 run).
 - Mobile touch mapping: 9/9 passed.
 - Transient input lifecycle: 2/2 passed.
 - High-score persistence: 4/4 passed.
-- Production Vite build: pass; main JS 475.54 kB / 140.71 kB gzip, CSS 6.22 kB / 1.89 kB gzip.
+- Production Vite build: pass; 745 modules transformed; main JS 475.54 kB / 140.71 kB gzip, CSS 6.22 kB / 1.89 kB gzip.
 
 Fresh managed-Chromium evidence:
 
