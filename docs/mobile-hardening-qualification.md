@@ -5,6 +5,23 @@ Current HEAD before this evidence-only update: 84f205261edc934a622c59b87e40094e6
 Original baseline HEAD: f9ec3db9e3d20bcb613120c3b39a070a4f255b34
 Scope: mobile/touch readiness verification against the existing dirty working tree. Existing gameplay/render/audio/campaign edits were preserved and not rewritten.
 
+## 2026-09-29 15:10 CEST current-HEAD requalification
+
+Fresh verification at HEAD `14a452d57aefa6c490d05e5031b57311ad5ea064` reproduced no mobile gameplay, touch-input, persistence, rendering-lifecycle, or responsive-layout defect. Product source remains unchanged; this section records only current qualification evidence.
+
+- Full workspace verification: PASS — TypeScript, Biome lint, Vitest 24/24 files with 79/79 tests, and production Vite build.
+- Focused mobile coverage inside that run remains green: mobile touch 9/9, high-score persistence 4/4, transient input lifecycle 2/2, and WebGL lifecycle 1/1.
+- Deterministic soak remained bounded across all five stages. Maximum projectile counts were 150, 168, 215, 158, and 187; fresh mean simulation-step samples were approximately 0.109, 0.057, 0.049, 0.046, and 0.046 ms respectively. Terminal Stage 4/5 soak samples were approximately 0.092 and 0.052 ms mean step cost.
+- Production build transformed 747 modules. Main JS remained 488.72 kB / 145.81 kB gzip; CSS remained 7.54 kB / 2.24 kB gzip; production ship and late-boss atlases remained 21.87 kB and 38.04 kB.
+- Managed Chromium portrait smoke at 390×844 measured a 360.6×540.9 CSS-pixel playfield with visible forced-touch control zones. Headless browser frame-work diagnostics over the latest 240 frames measured approximately 0.262 ms mean, 0.4 ms p95, and 0.7 ms max during the touch-driven run.
+- A synthetic runtime-pointer touch run exercised drag movement, movement-driven auto-fire, and repeated special/bomb edges through `PointerEvent(pointerType='touch')`. It advanced to stage tick 1200 with score 10,204 before the simple autopilot exhausted lives. This is input-path evidence, not a clearability failure: deterministic stage-clear suites remain green.
+- Managed Chromium landscape smoke at 852×393 had body scroll width exactly 852 px, a ~254.5×381.8 playfield, and ~578.3×381.8 telemetry pane, with no horizontal overflow. No page errors were reported; console output contained only Vite connection debug lines.
+- The current browser device preset can emulate iPhone-15 viewport/DPR (393×852 at DPR 3), and runtime diagnostics confirm the intentional render-resolution cap of 2. However, this installed preset still reports `navigator.maxTouchPoints=0` and coarse pointer false, so native touch-capability auto-detection cannot be certified from it.
+- Browser-backed high-score diagnostics remained schema v2 with `usingFallback=false` in the normal preview. Restricted/private-storage behavior remains covered by the throwing-adapter tests that exercise `SecurityError` and `QuotaExceededError` fallback.
+- Remaining qualification gaps are physical-device-only: iOS Safari / Android Chrome native multi-touch latency, sustained mobile-GPU/thermal frame pacing, BFCache/background recovery, private-mode storage behavior, and a real-time title → gameplay → stage-clear result → persisted-high-score run.
+
+No product source file was changed because no reproducible defect was found.
+
 ## 2026-09-29 14:40 CEST autonomous requalification
 
 Fresh verification at HEAD `dff74b33205b458ae943d285061ee8eec2cb70a7` reproduced no mobile gameplay, touch-input, persistence, rendering-lifecycle, or responsive-layout defect. Product source therefore remains unchanged; this section records only new qualification evidence.
