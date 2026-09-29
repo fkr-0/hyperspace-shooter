@@ -4,6 +4,132 @@ import type { GameState } from '../game/types'
 
 type Mixer = ReturnType<typeof createAudioMixer>
 type Cue = 'start' | 'boss' | 'bomb' | 'hit' | 'kill' | 'clear'
+type MusicIntensity = 'stage' | 'boss'
+
+export type ScoreAsset = Readonly<{
+  title: string
+  bpm: number
+  referenceTitle: string
+  lineage: 'sample-lab/ACE'
+  url: string
+}>
+
+const SCORE_ASSETS: Readonly<Record<StageTheme, Readonly<Record<MusicIntensity, ScoreAsset>>>> = Object.freeze({
+  'neon-drift': Object.freeze({
+    stage: Object.freeze({
+      title: 'Scorpion Telemetry',
+      bpm: 154,
+      referenceTitle: 'Nightglass Grit Circuit',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/02-scorpion-telemetry.mp3',
+        import.meta.url,
+      ).href,
+    }),
+    boss: Object.freeze({
+      title: 'Warden Null Burn',
+      bpm: 164,
+      referenceTitle: 'Velvet Broken Pressure',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/04-warden-null-burn.mp3',
+        import.meta.url,
+      ).href,
+    }),
+  }),
+  'orbital-furnace': Object.freeze({
+    stage: Object.freeze({
+      title: 'Helix Furnace Run',
+      bpm: 158,
+      referenceTitle: 'Afterglow Break Circuit',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/07-helix-furnace-run.mp3',
+        import.meta.url,
+      ).href,
+    }),
+    boss: Object.freeze({
+      title: 'Helix Furnace Run',
+      bpm: 158,
+      referenceTitle: 'Afterglow Break Circuit',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/07-helix-furnace-run.mp3',
+        import.meta.url,
+      ).href,
+    }),
+  }),
+  'chrome-meridian': Object.freeze({
+    stage: Object.freeze({
+      title: 'Chrome Weather',
+      bpm: 148,
+      referenceTitle: 'Nightglass Grit Circuit',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/09-chrome-weather.mp3',
+        import.meta.url,
+      ).href,
+    }),
+    boss: Object.freeze({
+      title: 'Meridian Cutover',
+      bpm: 168,
+      referenceTitle: 'Afterglow Break Circuit',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/12-meridian-cutover.mp3',
+        import.meta.url,
+      ).href,
+    }),
+  }),
+  'verdant-hive': Object.freeze({
+    stage: Object.freeze({
+      title: 'Recursive Canopy',
+      bpm: 144,
+      referenceTitle: 'Nightglass Grit Circuit',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/15-recursive-canopy.mp3',
+        import.meta.url,
+      ).href,
+    }),
+    boss: Object.freeze({
+      title: 'Queen Root Protocol',
+      bpm: 152,
+      referenceTitle: 'Afterglow Break Circuit',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/16-queen-root-protocol.mp3',
+        import.meta.url,
+      ).href,
+    }),
+  }),
+  'hyperglass-corridor': Object.freeze({
+    stage: Object.freeze({
+      title: 'Engine Event Horizon',
+      bpm: 174,
+      referenceTitle: 'Velvet Broken Pressure',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/20-engine-event-horizon.mp3',
+        import.meta.url,
+      ).href,
+    }),
+    boss: Object.freeze({
+      title: 'Engine Event Horizon',
+      bpm: 174,
+      referenceTitle: 'Velvet Broken Pressure',
+      lineage: 'sample-lab/ACE',
+      url: new URL(
+        '../../soundtrack/hyperspace-score-20260927-v3/tracks/20-engine-event-horizon.mp3',
+        import.meta.url,
+      ).href,
+    }),
+  }),
+})
+
+export function scoreAssetFor(theme: StageTheme, intensity: MusicIntensity): ScoreAsset {
+  return SCORE_ASSETS[theme][intensity]
+}
 
 const ROOT_HZ: Readonly<Record<StageTheme, number>> = Object.freeze({
   'neon-drift': 55,
@@ -38,7 +164,7 @@ function saw(time: number, frequency: number): number {
 export function renderProceduralTrack(
   sampleRate: number,
   theme: StageTheme,
-  intensity: 'stage' | 'boss' = 'stage',
+  intensity: MusicIntensity = 'stage',
   seconds = 4,
 ): readonly [Float32Array, Float32Array] {
   const length = Math.max(1, Math.floor(sampleRate * seconds))
@@ -96,7 +222,7 @@ export function renderProceduralTrack(
   return [left, right]
 }
 
-function createTrackBuffer(context: AudioContext, theme: StageTheme, intensity: 'stage' | 'boss'): AudioBuffer {
+function createTrackBuffer(context: AudioContext, theme: StageTheme, intensity: MusicIntensity): AudioBuffer {
   const [left, right] = renderProceduralTrack(context.sampleRate, theme, intensity)
   const buffer = context.createBuffer(2, left.length, context.sampleRate)
   buffer.getChannelData(0).set(left)
@@ -126,6 +252,7 @@ export function createHyperblastAudio(options?: {
   context?: AudioContext
   mixer?: Mixer
   createContext?: () => AudioContext
+  fetcher?: typeof fetch
 }) {
   const context =
     options?.context ??
@@ -139,9 +266,13 @@ export function createHyperblastAudio(options?: {
   mixer.setVolume('sfx', 0.8)
   mixer.setVolume('ui', 0.62)
 
+  const fetcher = options?.fetcher ?? globalThis.fetch?.bind(globalThis)
   const tracks = new Map<string, AudioBuffer>()
+  const scoreBuffers = new Map<string, Promise<AudioBuffer>>()
   const cues = new Map<Cue, AudioBuffer>()
   let music: ReturnType<Mixer['playBuffer']> | null = null
+  let currentScore: ScoreAsset | null = null
+  let musicGeneration = 0
   let theme: StageTheme = 'neon-drift'
   let lastMode: GameState['mode'] | null = null
   let lastBombsUsed = 0
@@ -149,7 +280,7 @@ export function createHyperblastAudio(options?: {
   let lastKills = 0
   let started = false
 
-  function track(intensity: 'stage' | 'boss'): AudioBuffer {
+  function track(intensity: MusicIntensity): AudioBuffer {
     const key = `${theme}:${intensity}`
     let buffer = tracks.get(key)
     if (!buffer) {
@@ -172,17 +303,51 @@ export function createHyperblastAudio(options?: {
     mixer.playBuffer(cueBuffer(cue), { bus: cue === 'start' ? 'ui' : 'sfx', volume: 0.75 })
   }
 
-  function startMusic(intensity: 'stage' | 'boss'): void {
+  async function loadScore(intensity: MusicIntensity): Promise<AudioBuffer | null> {
+    const asset = scoreAssetFor(theme, intensity)
+    if (!fetcher) return null
+
+    let pending = scoreBuffers.get(asset.url)
+    if (!pending) {
+      pending = fetcher(asset.url)
+        .then((response) => {
+          if (!response.ok) throw new Error(`Hyperblast score request failed: ${response.status}`)
+          return response.arrayBuffer()
+        })
+        .then((bytes) => context.decodeAudioData(bytes.slice(0)))
+      scoreBuffers.set(asset.url, pending)
+    }
+
+    try {
+      return await pending
+    } catch {
+      scoreBuffers.delete(asset.url)
+      return null
+    }
+  }
+
+  async function startMusic(intensity: MusicIntensity): Promise<void> {
+    const generation = ++musicGeneration
+    const score = scoreAssetFor(theme, intensity)
+    const decoded = await loadScore(intensity)
+    if (!started || generation !== musicGeneration) return
+
+    const nextBuffer = decoded ?? track(intensity)
     music?.stop()
-    music = mixer.playBuffer(track(intensity), { bus: 'music', volume: intensity === 'boss' ? 0.72 : 0.56, loop: true })
+    music = mixer.playBuffer(nextBuffer, {
+      bus: 'music',
+      volume: intensity === 'boss' ? 0.72 : 0.56,
+      loop: true,
+    })
+    currentScore = decoded ? score : null
   }
 
   async function start(nextTheme: StageTheme): Promise<void> {
     theme = nextTheme
     await mixer.resume()
-    startMusic('stage')
-    playCue('start')
     started = true
+    playCue('start')
+    await startMusic('stage')
   }
 
   function sync(state: GameState): void {
@@ -194,16 +359,20 @@ export function createHyperblastAudio(options?: {
     if (state.mode !== lastMode) {
       if (state.mode === 'midboss' || state.mode === 'boss') {
         playCue('boss')
-        startMusic('boss')
+        void startMusic('boss')
       } else if (lastMode === 'midboss' && state.mode === 'combat') {
-        startMusic('stage')
+        void startMusic('stage')
       } else if (state.mode === 'result') {
+        musicGeneration += 1
         music?.stop()
         music = null
+        currentScore = null
         playCue('clear')
       } else if (state.mode === 'gameover') {
+        musicGeneration += 1
         music?.stop()
         music = null
+        currentScore = null
       }
     }
 
@@ -218,10 +387,27 @@ export function createHyperblastAudio(options?: {
     sync,
     setMasterVolume: (volume: number) => mixer.setMasterVolume(volume),
     mute: (muted: boolean) => mixer.mute('master', muted),
-    snapshot: () => ({ ...mixer.snapshot(), started, theme, generatedTracks: tracks.size, generatedCues: cues.size }),
+    snapshot: () => ({
+      ...mixer.snapshot(),
+      started,
+      theme,
+      generatedTracks: tracks.size,
+      generatedCues: cues.size,
+      scoreBuffers: scoreBuffers.size,
+      score: currentScore
+        ? {
+            title: currentScore.title,
+            bpm: currentScore.bpm,
+            referenceTitle: currentScore.referenceTitle,
+            lineage: currentScore.lineage,
+          }
+        : { lineage: 'procedural-fallback' },
+    }),
     async destroy(): Promise<void> {
+      musicGeneration += 1
       music?.stop()
       music = null
+      currentScore = null
       await mixer.destroy()
     },
   }

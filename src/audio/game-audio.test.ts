@@ -1,7 +1,25 @@
 import { describe, expect, it } from 'vitest'
-import { renderProceduralTrack } from './game-audio'
+import { renderProceduralTrack, scoreAssetFor } from './game-audio'
 
-describe('Hyperblast procedural production audio', () => {
+describe('Hyperblast production audio', () => {
+  it('maps every campaign theme to Sample Lab / ACE-lineage runtime score cues', () => {
+    for (const theme of [
+      'neon-drift',
+      'orbital-furnace',
+      'chrome-meridian',
+      'verdant-hive',
+      'hyperglass-corridor',
+    ] as const) {
+      for (const intensity of ['stage', 'boss'] as const) {
+        const asset = scoreAssetFor(theme, intensity)
+        expect(asset.lineage).toBe('sample-lab/ACE')
+        expect(asset.url).toMatch(/hyperspace-score-20260927-v3\/tracks\/\d{2}-.*\.mp3$/)
+        expect(asset.bpm).toBeGreaterThan(100)
+      }
+    }
+  })
+
+  describe('procedural fail-safe', () => {
   it('renders deterministic bounded stereo loops for every campaign stage theme', () => {
     for (const theme of [
       'neon-drift',
@@ -32,5 +50,6 @@ describe('Hyperblast procedural production audio', () => {
     const glass = renderProceduralTrack(8_000, 'hyperglass-corridor', 'stage', 0.2)
     expect(hive[0]).not.toEqual(glass[0])
     expect(hive[1]).not.toEqual(glass[1])
+  })
   })
 })

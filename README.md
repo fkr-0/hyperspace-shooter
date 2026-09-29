@@ -16,7 +16,9 @@ High scores/results use a versioned `@arcade/runtime/storage` seam. Corrupt or o
 - Stages 1–5: Neon Drift Expanse, Orbital Furnace, Chrome Meridian, Verdant Hive and Hyperglass Corridor.
 - Production ship and VFX sprite banks are runtime-loaded and bounded through pooled Pixi frames.
 - Stage 4/5 boss gameplay identities deliberately reuse proven production hull clips; their names do not claim bespoke boss artwork.
-- Stage music and cues are deterministic procedural Web Audio. Verdant Hive uses detuned organic pads; Hyperglass Corridor uses a faster sequencer and hyperspace noise bed.
+- Primary stage/boss music is the v3 Hyperblast score generated from Sample Lab / ACE reference lineages (Nightglass Grit Circuit, Afterglow Break Circuit and Velvet Broken Pressure). The deterministic procedural Web Audio engine remains as a fail-safe when a score asset cannot be loaded.
+- Narrative presentation is deliberately outside deterministic simulation state: every run opens with an in-universe exchange, early enemy contact receives live dialogue, and mid-boss/boss/result states continue the stage story without changing replay behavior.
+- The 2:3 playfield is constrained by both viewport width and dynamic viewport height so portrait/desktop layouts scale vertically rather than assuming a fixed 720px field.
 
 ## Development
 

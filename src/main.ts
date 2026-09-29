@@ -10,6 +10,11 @@ import {
   stageNumberFor,
 } from './game/campaign'
 import { FIXED_STEP_SECONDS, PLAYFIELD } from './game/constants'
+import {
+  narrativeBeatFor,
+  stageNarrativeFor,
+  UNIVERSE_INTRO,
+} from './game/narrative'
 import { createHyperblastSimulation } from './game/simulation'
 import type { PlayerInput } from './game/types'
 import { fallbackKeyboardCode } from './input/keyboard-fallback'
@@ -26,6 +31,7 @@ const stageParam = new URLSearchParams(window.location.search).get('stage')
 const stageDefinition = stageForRequestedNumber(stageParam)
 const stageNumber = stageNumberFor(stageDefinition)
 const followingStage = nextStage(stageDefinition)
+const stageNarrative = stageNarrativeFor(stageDefinition.id)
 const highScores = createBrowserHighScoreService()
 let highScoreData = highScores.load().data
 let persistedResultKey = ''
@@ -48,6 +54,7 @@ app.innerHTML = `
           <div class="touch-zone touch-zone-fire" id="touch-fire-zone">HOLD // FIRE</div>
           <div class="touch-zone touch-zone-special" id="touch-special-zone">TAP // BOMB</div>
         </div>
+        <div class="live-dialogue" id="live-dialogue" aria-live="polite" aria-atomic="true"></div>
         <div class="game-overlay" id="game-overlay" aria-live="polite"></div>
       </div>
       <aside class="telemetry" aria-live="polite">
@@ -76,7 +83,7 @@ app.innerHTML = `
         </label>
       </aside>
     </section>
-    <footer>PRODUCTION SHIP + VFX BANKS // DETERMINISTIC PROCEDURAL AUDIO // STAGE 4/5 BOSSES REUSE PRODUCTION HULL CLIPS // @ARCADE/RUNTIME</footer>
+    <footer>PRODUCTION SHIP + VFX BANKS // SAMPLE LAB / ACE-LINEAGE SCORE WITH PROCEDURAL FAIL-SAFE // STAGE 4/5 BOSSES REUSE PRODUCTION HULL CLIPS // @ARCADE/RUNTIME</footer>
   </main>
 `
 
@@ -89,6 +96,7 @@ function requiredElement<T extends Element>(selector: string): T {
 const shell = requiredElement<HTMLElement>('.game-shell')
 const playfield = requiredElement<HTMLElement>('#playfield')
 const overlay = requiredElement<HTMLElement>('#game-overlay')
+const liveDialogue = requiredElement<HTMLElement>('#live-dialogue')
 const reducedMotionControl = requiredElement<HTMLInputElement>('#reduced-motion')
 const mobileAutoFireControl = requiredElement<HTMLInputElement>('#mobile-auto-fire')
 const audioMutedControl = requiredElement<HTMLInputElement>('#audio-muted')
@@ -232,6 +240,36 @@ function readInput(): PlayerInput {
 }
 
 let overlayKey = ''
+let narrativeBeatKey = ''
+
+function renderLiveDialogue(): void {
+  const state = simulation.state
+  const beat = narrativeBeatFor(stageDefinition.id, state.stageTick, state.mode)
+  const key = beat?.id ?? ''
+  if (key === narrativeBeatKey) return
+  narrativeBeatKey = key
+
+  if (!beat) {
+    liveDialogue.classList.remove('visible')
+    liveDialogue.replaceChildren()
+    return
+  }
+
+  liveDialogue.classList.add('visible')
+  liveDialogue.innerHTML = `
+    <p class="dialogue-label">${beat.label}</p>
+    ${beat.lines
+      .map(
+        (line) => `
+          <p class="dialogue-line">
+            <strong>${line.speaker}</strong>
+            <span>${line.text}</span>
+          </p>
+        `,
+      )
+      .join('')}
+  `
+}
 
 function persistResultIfNeeded(): void {
   const result = simulation.state.result
@@ -270,7 +308,14 @@ function renderOverlay(): void {
       <div class="overlay-card">
         <p class="eyebrow">ARCADE RUN // FIXED 60 HZ</p>
         <h2>${stageDefinition.title.toUpperCase()}</h2>
-        <p>${STAGE_BRIEFINGS[stageDefinition.id] ?? 'Enter the deterministic campaign stage.'}</p>
+        <p class="story-kicker">${stageNarrative.sector}</p>
+        <p class="story-universe">${UNIVERSE_INTRO}</p>
+        <p class="story-premise">${stageNarrative.premise}</p>
+        <div class="mission-copy">
+          <span>MISSION</span>
+          <p>${STAGE_BRIEFINGS[stageDefinition.id] ?? stageNarrative.objective}</p>
+          <small>${stageNarrative.objective}</small>
+        </div>
         <p class="best-line">LOCAL BEST <strong>${bestScore.toLocaleString()}</strong></p>
         <button type="button" data-action="start">START STAGE ${stageNumber}</button>
         <nav class="stage-links" aria-label="Five-stage campaign selection">
@@ -293,6 +338,7 @@ function renderOverlay(): void {
       <div class="overlay-card result-card">
         <p class="eyebrow">STAGE CLEAR</p>
         <h2>GRADE ${result.grade}</h2>
+        <p class="story-outcome">${stageNarrative.clear}</p>
         ${latestResultWasBest ? '<p class="new-best" role="status">NEW LOCAL STAGE BEST</p>' : ''}
         <dl>
           <div><dt>SCORE</dt><dd>${result.score.toLocaleString()}</dd></div>
@@ -322,7 +368,8 @@ function renderOverlay(): void {
       <div class="overlay-card">
         <p class="eyebrow">SIGNAL LOST</p>
         <h2>RUN OVER</h2>
-        <p>Signal integrity collapsed. Re-enter ${stageDefinition.title} from a clean deterministic seed.</p>
+        <p>${stageNarrative.gameover}</p>
+        <small>Signal integrity collapsed. Re-enter ${stageDefinition.title} from a clean deterministic seed.</small>
         <button type="button" data-action="restart">RETRY</button>
       </div>
     `
@@ -355,6 +402,7 @@ function updateHud(): void {
   hud.hostiles.textContent = String(hostileCount)
   hud.enemies.textContent = String(state.enemies.length)
   audio?.sync(state)
+  renderLiveDialogue()
   renderOverlay()
 }
 
