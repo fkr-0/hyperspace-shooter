@@ -47,7 +47,7 @@ artifact_smoke:
     the streamed local archive is a readability/smoke sample and is not claimed
     to be byte-reproducible because gzip metadata may vary.
 publication:
-  repository: fkr-0/hyperblast-shooter
+  repository: fkr-0/hyperspace-shooter
   repository_creation: authorized_pending
   default_branch_push: authorized_pending
   tag_push: authorized_pending
