@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@arcade/runtime':
-        specifier: file:../arcade-runtime
-        version: file:../arcade-runtime(pixi.js@8.19.0)
+        specifier: file:vendor/arcade-runtime
+        version: file:vendor/arcade-runtime(pixi.js@8.19.0)
       pixi.js:
         specifier: ^8.19.0
         version: 8.19.0
@@ -30,8 +30,8 @@ importers:
 
 packages:
 
-  '@arcade/runtime@file:../arcade-runtime':
-    resolution: {directory: ../arcade-runtime, type: directory}
+  '@arcade/runtime@file:vendor/arcade-runtime':
+    resolution: {directory: vendor/arcade-runtime, type: directory}
     engines: {node: '>=20'}
     peerDependencies:
       pixi.js: '>=8.18.0 <9'
@@ -543,7 +543,7 @@ packages:
 
 snapshots:
 
-  '@arcade/runtime@file:../arcade-runtime(pixi.js@8.19.0)':
+  '@arcade/runtime@file:vendor/arcade-runtime(pixi.js@8.19.0)':
     optionalDependencies:
       pixi.js: 8.19.0
 

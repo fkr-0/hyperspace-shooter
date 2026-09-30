@@ -1,0 +1,58 @@
+schema: hyperblast.release-evidence/v1
+release:
+  project: hyperblast-shooter
+  version_before: 0.0.1
+  version_after: 0.0.2
+  candidate_tag: v0.0.2
+  date: 2026-09-30
+  base_revision: c7e9bc3d2f1a199f87ff82583d4db9fffc903d27
+  publish_authorized: true
+dependency_vector:
+  arcade_runtime:
+    package: "@arcade/runtime"
+    version: 1.13.0
+    source_tag: v1.13.0
+    source_revision: 57aa56d77e7c1d36d6dd28131cf6386578b2bab3
+    integration: vendored_clean_tag
+    vendor_path: vendor/arcade-runtime
+    vendor_files: 37
+verification:
+  actionlint:
+    command: actionlint .github/workflows/release.yml
+    result: pass
+  install:
+    command: pnpm install --frozen-lockfile --prefer-offline
+    result: pass
+  release_gate:
+    command: pnpm check
+    result: pass
+    test_files: 24
+    tests: 79
+    typecheck: pass
+    lint_files: 66
+    build_modules: 747
+  pages_build:
+    command: pnpm typecheck && pnpm exec vite build --base /hyperblast-shooter/
+    result: pass
+    base_path: /hyperblast-shooter/
+  git_diff_check:
+    command: git diff --check
+    result: pass
+artifact_smoke:
+  production_index_sha256: 59269e76a63843e0f8100a1dda7c5a74009340d90db1798ec46decb7d46974f4
+  streamed_archive_sha256_sample: 93f33f72735c552dcbf87790b742ff91dc236b7b3229cba3a44618c7984a9ed0
+  streamed_archive_entries: 40
+  note: >-
+    The tag workflow rebuilds and publishes its own archive plus SHA-256 checksum;
+    the streamed local archive is a readability/smoke sample and is not claimed
+    to be byte-reproducible because gzip metadata may vary.
+publication:
+  repository: fkr-0/hyperblast-shooter
+  repository_creation: authorized_pending
+  default_branch_push: authorized_pending
+  tag_push: authorized_pending
+  github_release: workflow_pending
+  github_pages: workflow_pending
+known_limits:
+  - Physical iOS Safari and Android Chrome sustained frame pacing remains device-lab qualification.
+  - The vendored runtime is intentionally pinned to the clean v1.13.0 tag rather than the unrelated dirty runtime checkout.

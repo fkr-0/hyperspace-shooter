@@ -1,0 +1,15 @@
+export {
+  collectArcadeSpriteAnimationEvents,
+  compileArcadeSpriteClip,
+  createArcadeSpriteContactSheetLayout,
+  createArcadeSpriteFrameGeometry,
+  createArcadeSpriteManifestIndex,
+  drawArcadeSpriteCanvas,
+  drawArcadeSpriteCanvasFrame,
+  drawArcadeSpriteContactSheetCanvas,
+  inspectArcadeSpriteFrame,
+  normalizeArcadeSpriteManifest,
+  resolveArcadeSpriteVisibleScale,
+  resolveArcadeSpriteFrame,
+  validateArcadeSpriteManifest,
+} from './index.js';

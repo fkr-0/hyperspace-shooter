@@ -1,0 +1,134 @@
+{
+  "name": "@arcade/runtime",
+  "version": "1.13.0",
+  "type": "module",
+  "description": "Stable deterministic arcade runtime with native Pixi ownership, stage composition, reusable gameplay modules, replay/rollback and services.",
+  "license": "MIT",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./core": {
+      "types": "./src/core.d.ts",
+      "import": "./src/core.js"
+    },
+    "./compute": {
+      "types": "./src/compute.d.ts",
+      "import": "./src/compute.js"
+    },
+    "./animation": {
+      "types": "./src/animation.d.ts",
+      "import": "./src/animation.js"
+    },
+    "./pixi": {
+      "types": "./src/pixi.d.ts",
+      "import": "./src/pixi.js"
+    },
+    "./testing": {
+      "types": "./src/testing.d.ts",
+      "import": "./src/testing.js"
+    },
+    "./sprites": {
+      "types": "./src/sprites.d.ts",
+      "import": "./src/sprites.js"
+    },
+    "./sprites/manifest": {
+      "types": "./src/sprite-manifest.d.ts",
+      "import": "./src/sprite-manifest.js"
+    },
+    "./assets": {
+      "types": "./src/assets.d.ts",
+      "import": "./src/assets.js"
+    },
+    "./audio": {
+      "types": "./src/audio.d.ts",
+      "import": "./src/audio.js"
+    },
+    "./ui": {
+      "types": "./src/ui.d.ts",
+      "import": "./src/ui.js"
+    },
+    "./gameplay": {
+      "types": "./src/gameplay.d.ts",
+      "import": "./src/gameplay.js"
+    },
+    "./stages": {
+      "types": "./src/stages.d.ts",
+      "import": "./src/stages.js"
+    },
+    "./storage": {
+      "types": "./src/storage.d.ts",
+      "import": "./src/storage.js"
+    },
+    "./compat": {
+      "types": "./src/compat.d.ts",
+      "import": "./src/compat.js"
+    },
+    "./netcode": {
+      "types": "./src/netcode.d.ts",
+      "import": "./src/netcode.js"
+    },
+    "./tooling": {
+      "types": "./src/tooling.d.ts",
+      "import": "./src/tooling.js"
+    }
+  },
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "api",
+    "docs",
+    "templates",
+    "release-train.json",
+    "roadmap.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "source:build": "node scripts/build-source.mjs",
+    "source:check": "node scripts/build-source.mjs --check",
+    "bench:compute": "node scripts/benchmark-compute.mjs",
+    "bench:pixi": "node scripts/benchmark-pixi-runtime.mjs",
+    "test": "node --test",
+    "check": "npm test && npm run build",
+    "sync:games": "node scripts/sync-to-games.mjs",
+    "build": "npm run source:check && node --check src/index.js && node --check src/core.js && node --check src/compute.js && node --check src/animation.js && node --check src/pixi.js && node --check src/testing.js && node --check src/sprites.js && node --check src/sprite-manifest.js && node --check src/assets.js && node --check src/audio.js && node --check src/ui.js && node --check src/gameplay.js && node --check src/stages.js && node --check src/storage.js && node --check src/compat.js && node --check src/netcode.js && node --check src/tooling.js && node --check scripts/source-layout.mjs && node --check scripts/benchmark-compute.mjs && node --check scripts/benchmark-pixi-runtime.mjs && node --check scripts/build-source.mjs && node --check scripts/bootstrap-source-fragments.mjs && node --check scripts/update-api-snapshots.mjs && node --check scripts/sync-to-games.mjs && node --check scripts/verify-release.mjs && node --check scripts/verify-consumers.mjs && node --check scripts/verify-api-level-2.mjs && node --check scripts/migrate-api-level-2.mjs && node --check scripts/verify-browser-certification.mjs && node --check scripts/consumer-roots.mjs && node --check scripts/sync-consumers.mjs && node --check scripts/verify-release-train.mjs && node --check scripts/verify-packed-templates.mjs && node --check scripts/verify-consumer-release-trains.mjs && node --check scripts/verify-release-tags.mjs",
+    "release:verify": "node scripts/verify-release.mjs",
+    "release:consumers": "node scripts/verify-consumers.mjs",
+    "release:check": "npm run check && npm run release:verify && npm run release:plan:check && npm run release:templates && npm pack --dry-run",
+    "release:full": "npm run release:check && npm run sync:consumers:check && npm run release:trains:check && npm run release:consumers",
+    "release:pack": "npm pack --json",
+    "prepack": "npm run release:verify",
+    "api:check": "node scripts/verify-release.mjs",
+    "api:level2:check": "node scripts/verify-api-level-2.mjs",
+    "api:level2:migrate": "node scripts/migrate-api-level-2.mjs",
+    "certify:browsers": "node scripts/verify-browser-certification.mjs",
+    "api:update": "npm run source:check && node scripts/update-api-snapshots.mjs",
+    "sync:consumers": "node scripts/sync-consumers.mjs",
+    "sync:consumers:check": "node scripts/sync-consumers.mjs --check",
+    "release:plan:check": "node scripts/verify-release-train.mjs",
+    "release:templates": "node scripts/verify-packed-templates.mjs",
+    "release:trains:check": "node scripts/verify-consumer-release-trains.mjs",
+    "release:tags:check": "node scripts/verify-release-tags.mjs"
+  },
+  "peerDependencies": {
+    "pixi.js": ">=8.18.0 <9"
+  },
+  "devDependencies": {
+    "pixi.js": "^8.19.0"
+  },
+  "peerDependenciesMeta": {
+    "pixi.js": {
+      "optional": true
+    }
+  }
+}
